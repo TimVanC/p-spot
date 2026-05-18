@@ -1,0 +1,433 @@
+# P Spot — Cursor Rules
+# Keep this file in the root of the p-spot/ directory.
+# This is the source of truth for every technical and product decision.
+# Do not deviate from anything defined here without explicit instruction.
+
+---
+
+## PRODUCT OVERVIEW
+
+P Spot is a mobile app where users photograph and score their most epic outdoor pee spots.
+An AI evaluates each photo and generates a score. Scores compete on global leaderboards,
+appear on a live map, and feed into a social feed called The Stream.
+
+Companion app in development: DrinkSpot (drinkspot.app) — same concept, different liquid.
+
+---
+
+## TECH STACK — NON-NEGOTIABLE
+
+| Layer              | Technology                                      |
+|--------------------|--------------------------------------------------|
+| Mobile app         | React Native + Expo (managed workflow)           |
+| Backend / Database | Supabase (auth, PostgreSQL, storage, realtime)   |
+| AI scoring/mod     | Claude API — claude-sonnet-4-20250514 (vision)   |
+| Maps               | Mapbox                                           |
+| Image storage      | Supabase Storage                                 |
+| EXIF parsing       | exifr (client-side, before upload)               |
+| Auth               | Supabase Auth (email, Apple, Google)             |
+| Ads                | Google AdMob                                     |
+| Analytics          | PostHog                                          |
+| Push notifications | Expo Push Notifications + Supabase triggers      |
+| Strava             | Strava API (OAuth, activity matching)            |
+| Age verification   | DOB + checkbox at V1. Persona at V2.             |
+| Landing page       | Static HTML — index.html (already built)         |
+| Landing backend    | Same Supabase project as the app                 |
+
+Do NOT suggest alternatives to these. Do NOT introduce additional dependencies
+without being explicitly asked.
+
+---
+
+## REPOSITORY STRUCTURE
+
+When scaffolding the app, use this exact structure:
+
+```
+p-spot/
+├── index.html                  # Landing page (waitlist)
+├── .cursorrules                # This file
+├── docs/
+│   └── PSpot_Product_Concept.docx
+├── app/                        # React Native / Expo app
+│   ├── app/                    # Expo Router file-based routing
+│   │   ├── (auth)/
+│   │   │   ├── login.tsx
+│   │   │   └── signup.tsx
+│   │   ├── (tabs)/
+│   │   │   ├── index.tsx       # Home — map view
+│   │   │   ├── stream.tsx      # The Stream feed
+│   │   │   ├── submit.tsx      # Submit a spot
+│   │   │   ├── leaderboard.tsx
+│   │   │   └── profile.tsx
+│   │   ├── spot/[id].tsx       # Spot detail screen
+│   │   ├── badges.tsx
+│   │   ├── level.tsx
+│   │   ├── notifications.tsx
+│   │   ├── settings.tsx
+│   │   └── _layout.tsx
+│   ├── components/             # Shared UI components
+│   ├── lib/
+│   │   ├── supabase.ts         # Supabase client
+│   │   ├── claude.ts           # Claude API scoring + moderation
+│   │   ├── strava.ts           # Strava OAuth + activity fetch
+│   │   ├── exif.ts             # EXIF extraction via exifr
+│   │   └── mapbox.ts           # Mapbox helpers
+│   ├── hooks/                  # Custom React hooks
+│   ├── stores/                 # Zustand state stores
+│   ├── types/                  # TypeScript types
+│   └── constants/
+│       ├── scoring.ts          # Scoring weights and thresholds
+│       └── levels.ts           # Level names and XP thresholds
+└── supabase/
+    ├── migrations/             # SQL migration files
+    └── functions/              # Supabase Edge Functions
+```
+
+---
+
+## DATABASE SCHEMA
+
+### waitlist
+```sql
+create table waitlist (
+  id           bigserial primary key,
+  first_name   text not null,
+  last_name    text not null,
+  email        text not null unique,
+  signed_up_at timestamptz not null default now()
+);
+```
+
+### users (extends Supabase auth.users)
+```sql
+create table profiles (
+  id            uuid primary key references auth.users(id) on delete cascade,
+  username      text unique not null,
+  display_name  text,
+  avatar_url    text,
+  level         integer not null default 1,
+  xp            integer not null default 0,
+  strava_token  text,                        -- encrypted
+  strikes       integer not null default 0,
+  is_banned     boolean not null default false,
+  created_at    timestamptz not null default now()
+);
+```
+
+### spots
+```sql
+create table spots (
+  id              uuid primary key default gen_random_uuid(),
+  user_id         uuid not null references profiles(id) on delete cascade,
+  image_url       text not null,
+  share_token     text unique not null default gen_random_uuid()::text,  -- for private share links
+  privacy         text not null default 'public'
+                  check (privacy in ('public', 'streamers', 'private')),
+
+  -- location
+  lat             float8 not null,
+  lng             float8 not null,
+  altitude_ft     float4,
+  location_name   text,
+
+  -- base scores
+  score_total     float4,
+  score_view      float4,
+  score_elevation float4,
+  score_remoteness float4,
+  score_lighting  float4,
+
+  -- bonus scores
+  bonus_skyline     float4 default 0,
+  bonus_sunrise     float4 default 0,
+  bonus_wildlife    float4 default 0,
+  bonus_girth       float4 default 0,
+  bonus_hydration   float4 default 0,
+  bonus_danger      float4 default 0,
+  bonus_effort      float4 default 0,
+  bonus_toilet      float4 default 0,
+
+  -- ai output
+  score_tier      text,
+  ai_quote        text,
+  wildlife_detected boolean default false,
+
+  -- strava
+  strava_activity_id  bigint,
+  strava_distance_mi  float4,
+  strava_elevation_ft float4,
+  strava_duration_sec integer,
+  strava_suffer_score integer,
+
+  -- engagement
+  shake_count     integer not null default 0,
+  drip_count      integer not null default 0,
+
+  -- moderation
+  moderation_pass boolean,
+
+  submitted_at    timestamptz not null default now()
+);
+```
+
+### followers
+```sql
+create table followers (
+  follower_id  uuid references profiles(id) on delete cascade,
+  following_id uuid references profiles(id) on delete cascade,
+  created_at   timestamptz default now(),
+  primary key (follower_id, following_id)
+);
+```
+
+### shakes (likes)
+```sql
+create table shakes (
+  user_id  uuid references profiles(id) on delete cascade,
+  spot_id  uuid references spots(id) on delete cascade,
+  created_at timestamptz default now(),
+  primary key (user_id, spot_id)
+);
+```
+
+### drips (comments)
+```sql
+create table drips (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid references profiles(id) on delete cascade,
+  spot_id    uuid references spots(id) on delete cascade,
+  body       text not null,
+  created_at timestamptz default now()
+);
+```
+
+### badges
+```sql
+create table badges (
+  id          text primary key,    -- e.g. 'first_drop', 'golden_stream'
+  name        text not null,
+  description text,
+  is_progress boolean default false  -- true = has a progress bar
+);
+
+create table user_badges (
+  user_id    uuid references profiles(id) on delete cascade,
+  badge_id   text references badges(id),
+  progress   float4 default 0,     -- 0.0–1.0 for progress badges
+  earned_at  timestamptz,          -- null until fully earned
+  primary key (user_id, badge_id)
+);
+```
+
+### notifications
+```sql
+create table notifications (
+  id         uuid primary key default gen_random_uuid(),
+  user_id    uuid references profiles(id) on delete cascade,
+  type       text not null,  -- 'shake','drip','badge','leaderboard','new_streamer'
+  payload    jsonb,
+  read       boolean default false,
+  created_at timestamptz default now()
+);
+```
+
+---
+
+## SCORING SYSTEM
+
+Scores are UNCAPPED. No ceiling. Ever.
+
+### Base score (out of 70)
+- View quality:   0–25 pts
+- Elevation:      0–20 pts (scaled, sea level = 0, 14k+ ft = 20)
+- Remoteness:     0–15 pts
+- Lighting:       0–10 pts (golden hour / sunrise / sunset multiplier)
+
+### Bonus points (additive)
+- Skyline detail:      0–8 pts
+- Sunrise/sunset:      +5 pts (confirmed via EXIF timestamp + GPS)
+- Wildlife easter egg: 0–8 pts
+- Stream girth:        0–5 pts
+- Hydration score:     0–5 pts (color analysis)
+- Danger score:        0–8 pts
+- Effort bonus:        0–10 pts (via Strava — distance + elevation gain)
+- Special toilet:      0–10 pts (replaces scenic for toilet submissions)
+
+### Streak
+Streaks do NOT affect individual spot scores.
+Streaks only contribute to XP for leveling. Never mix these.
+
+### Score tiers (approximate guidance, not hard cutoffs)
+- 0–40:   Average Relief
+- 41–55:  Decent Drainage
+- 56–69:  Solid Stream
+- 70–79:  Peak Performer
+- 80–89:  Elite Peak Releaser
+- 90–99:  Cascade Commander
+- 100+:   Legendary — log and celebrate these
+
+---
+
+## PRIVACY SYSTEM
+
+Every spot has a privacy field: 'public' | 'streamers' | 'private'
+
+| Setting     | Map | Leaderboard | Stream | Share link |
+|-------------|-----|-------------|--------|------------|
+| public      | ✓   | ✓           | ✓      | ✓          |
+| streamers   | ✗   | score only  | followers only | ✓  |
+| private     | ✗   | ✗           | ✗      | ✓ (owner-generated only) |
+
+Share links use the spot's share_token (UUID). They are never guessable.
+Viewing a private spot via share link does NOT make it appear anywhere on the app.
+Privacy can be changed post-submission from the spot detail screen.
+
+---
+
+## SOCIAL VOCABULARY — USE THESE TERMS EVERYWHERE IN UI COPY
+
+| Concept         | Term          |
+|-----------------|---------------|
+| Feed            | The Stream    |
+| Submissions     | Spots         |
+| Likes           | Shakes        |
+| Comments        | Drips         |
+| Followers       | Streamers     |
+| Following       | In your Stream|
+
+Do not use "likes", "comments", "followers", or "posts" anywhere in user-facing copy.
+
+---
+
+## LEVEL SYSTEM
+
+XP sources: submissions, score quality, streak bonuses, badges earned,
+Strava-linked activities, Shakes received.
+
+| Levels  | Title              |
+|---------|--------------------|
+| 1–4     | Tiny Tinkler       |
+| 5–9     | Stream Starter     |
+| 10–14   | Tinkle Titan       |
+| 15–19   | Pissmonger         |
+| 20–24   | Whiz Kid           |
+| 25–29   | The Releaser       |
+| 30–34   | Flow Lord          |
+| 35–39   | Arc Angel          |
+| 40–44   | Cascade Commander  |
+| 45–49   | Piss Prophet       |
+| 50+     | The King Wizzard   |
+
+---
+
+## DESIGN SYSTEM
+
+### Typefaces
+- Headings / display: Syne (weight 700, 800)
+- Body / UI:          Inter (weight 400, 500)
+
+### Color palette
+- Primary yellow:   #D4B84A  (hydrated pee yellow — the brand color)
+- Yellow light:     #F5EEC8
+- Yellow mid:       #B89A2E
+- Yellow deep:      #7A6318
+- Yellow text:      #3D3010
+- Map background:   #EDE9C8
+
+Always use CSS variables. Never hardcode hex values inline.
+
+### Tone
+- Dry, confident, self-aware humor
+- Never try-hard or cringe
+- Short copy. Punchy.
+- Examples: "Stay hydrated." / "Locked in." / "Rate the view. Claim the spot."
+
+---
+
+## IMAGE MODERATION + SCORING (Claude API)
+
+Every submission makes ONE Claude API call that handles BOTH moderation and scoring.
+Never make two separate calls.
+
+Model: claude-sonnet-4-20250514
+Input: base64 image + structured prompt
+Output: JSON with moderation result + full score breakdown
+
+If moderation fails → reject, do not score, increment user strike count.
+Strike thresholds: 1 = warning, 2 = 7-day ban, 3 = permanent ban.
+
+EXIF GPS data is required. If absent → reject with message:
+"Original photo required — screenshots don't count."
+
+---
+
+## STRAVA INTEGRATION
+
+- User connects Strava once via OAuth in settings
+- On spot submission, match nearest activity by timestamp (within 2-hour window)
+- Pull: distance_mi, elevation_gain_ft, duration_sec, suffer_score, activity_type
+- If no match found → skip effort bonus gracefully, do not error
+- Effort bonus: scaled 0–10 pts based on distance + elevation gain
+
+---
+
+## AD PLACEMENT
+
+Primary slot: AFTER submission is confirmed, WHILE the AI score is loading.
+This is the highest-attention, highest-mood moment in the app.
+Do not place ads anywhere else at launch.
+Ad network: Google AdMob.
+
+---
+
+## SCREENS (complete list)
+
+1.  Onboarding (4 slides)
+2.  Sign up / Log in
+3.  Age verification gate
+4.  Home — map view (default) + table toggle of own recent spots
+5.  The Stream — social feed from Streamers
+6.  Submit flow — upload → EXIF check → privacy picker → ad → score reveal
+7.  Score reveal — full breakdown, Strava strip, AI quote, share button
+8.  Spot detail — Strava-style full view (tappable from map, stream, leaderboard)
+9.  Leaderboard — Friends / State / Country / Continent / Global + category tabs
+10. Badges & achievements — Apple Watch style, locked badges greyed with progress
+11. Level progress — XP breakdown, tier roadmap
+12. Profile — spot grid, stats, level, badges
+13. Profile settings — account, Strava connect, notifications, privacy defaults
+14. Notification center
+15. Privacy picker — bottom sheet on submit: Public / Streamers / Private
+16. Shared spot web view — recipient view via share link (non-app users see CTA)
+
+---
+
+## LEADERBOARD CATEGORIES
+
+- Top score of all time
+- Most total submissions
+- Top average score (min 10 submissions)
+- Longest active streak
+- Most scores above 90
+- Most wildlife easter eggs
+- Highest danger score
+- Best hydration score
+- Most exotic toilet
+- Weekly hot streak (most submissions in 7 days)
+- Most Strava-linked submissions
+
+---
+
+## WHAT NOT TO DO
+
+- Do NOT cap scores at 100
+- Do NOT use streak data in individual spot scores
+- Do NOT build a DM system (use native share sheet instead)
+- Do NOT restrict signup by gender
+- Do NOT use localStorage or sessionStorage in any web-facing code
+- Do NOT introduce new dependencies without being asked
+- Do NOT use "likes", "comments", "followers", or "posts" in UI copy
+- Do NOT make separate API calls for moderation and scoring — one call does both
+- Do NOT expose private spots on the map or leaderboard under any circumstance
+- Do NOT use WidthType.PERCENTAGE in any docx generation
+- Do NOT use Bebas Neue (old font — replaced by Syne)
