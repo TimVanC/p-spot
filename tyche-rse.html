@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tyche RSE Construction — Integrated Construction & Energy Solutions</title>
+<meta name="description" content="Tyche RSE Construction delivers integrated construction and energy solutions across New Jersey and the tri-state area. Committed, accountable, performance-driven builders.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+
+/* ─── RESET ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: 'Barlow', sans-serif; background: #fff; color: #1a1a18; overflow-x: hidden; }
+a { text-decoration: none; }
+img { display: block; width: 100%; height: 100%; object-fit: cover; }
+button { cursor: pointer; background: none; border: none; font: inherit; }
+
+/* ─── TOKENS ─────────────────────────────────────────────── */
+:root {
+  --charcoal:     #1a1a18;
+  --charcoal-mid: #252522;
+  --charcoal-dim: #2d2d2a;
+  --gold:         #c8a85a;
+  --gold-dark:    #a8883a;
+  --gold-pale:    rgba(200,168,90,0.12);
+  --white:        #ffffff;
+  --off-white:    #f5f5f0;
+  --nav-h:        80px;
+}
+
+/* ─── LAYOUT ─────────────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 56px;
+}
+
+/* ─── PHOTO PLACEHOLDERS ──────────────────────────────────── */
+.photo-bg {
+  position: relative;
+  background:
+    linear-gradient(160deg, #252522 0%, #1a1a18 55%, #0e0e0c 100%);
+  overflow: hidden;
+}
+.photo-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient( 45deg, rgba(200,168,90,0.025) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(200,168,90,0.025) 25%, transparent 25%);
+  background-size: 72px 72px;
+}
+.photo-tag {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  text-align: center;
+  padding: 14px 32px;
+  border: 1px solid rgba(200,168,90,0.2);
+  backdrop-filter: blur(4px);
+  pointer-events: none;
+}
+.photo-tag svg {
+  display: block;
+  margin: 0 auto 10px;
+  color: rgba(200,168,90,0.35);
+}
+.photo-tag span {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(200,168,90,0.45);
+}
+
+/* ─── SHARED TYPOGRAPHY ───────────────────────────────────── */
+.eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.eyebrow-line {
+  display: block;
+  width: 36px;
+  height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+/* ─── BUTTONS ─────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 15px 36px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+.btn-gold {
+  background: var(--gold);
+  color: var(--charcoal);
+}
+.btn-gold:hover { background: var(--gold-dark); }
+.btn-outline-white {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.55);
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.08); border-color: var(--white); }
+.btn-outline-gold {
+  background: transparent;
+  color: var(--gold);
+  border: 1.5px solid var(--gold);
+}
+.btn-outline-gold:hover { background: var(--gold); color: var(--charcoal); }
+.btn-text-gold {
+  background: transparent;
+  color: var(--gold);
+  padding: 0;
+  letter-spacing: 0.12em;
+  font-size: 12px;
+}
+.btn-text-gold:hover { gap: 18px; }
+.btn svg { flex-shrink: 0; transition: transform 0.2s; }
+.btn:hover svg { transform: translateX(3px); }
+
+/* ═══════════════════════════════════════════════════════════ */
+/* NAV                                                         */
+/* ═══════════════════════════════════════════════════════════ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  transition: background 0.35s ease, box-shadow 0.35s ease;
+}
+.nav.scrolled {
+  background: var(--charcoal);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.07);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 56px;
+  gap: 40px;
+}
+.nav-logo {
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.nav-logo-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  line-height: 1;
+}
+.nav-logo-sub {
+  display: block;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  font-size: 7.5px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.42);
+  margin-top: 3px;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.72);
+  transition: color 0.18s;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-cta {
+  flex-shrink: 0;
+}
+/* Mobile toggle */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 6px 2px;
+}
+.nav-toggle span {
+  display: block;
+  width: 22px;
+  height: 1.5px;
+  background: rgba(255,255,255,0.8);
+  transition: all 0.2s;
+}
+
+/* Mobile drawer */
+.nav-mobile {
+  display: none;
+  position: fixed;
+  top: var(--nav-h);
+  left: 0; right: 0;
+  background: var(--charcoal);
+  padding: 32px 32px 48px;
+  z-index: 199;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.nav-mobile.open { display: flex; }
+.nav-mobile a {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  transition: color 0.18s;
+}
+.nav-mobile a:hover { color: var(--gold); }
+.nav-mobile .btn-gold {
+  display: inline-flex;
+  margin-top: 28px;
+  align-self: flex-start;
+  font-size: 12px;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 1. HERO                                                     */
+/* ═══════════════════════════════════════════════════════════ */
+.hero {
+  position: relative;
+  height: 100vh;
+  min-height: 680px;
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 88px;
+}
+.hero .photo-bg {
+  position: absolute;
+  inset: 0;
+}
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(26,26,24,0.28) 0%,
+    rgba(26,26,24,0.18) 38%,
+    rgba(26,26,24,0.72) 100%
+  );
+  z-index: 1;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 56px;
+}
+.hero .eyebrow { margin-bottom: 22px; }
+.hero-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(56px, 7.5vw, 110px);
+  line-height: 0.93;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--white);
+  max-width: 940px;
+  margin-bottom: 28px;
+}
+.hero-sub {
+  font-size: 17px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.72);
+  max-width: 460px;
+  line-height: 1.68;
+  margin-bottom: 44px;
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+/* Video button with animated play ring */
+.btn-video {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--white);
+  padding: 15px 32px;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.btn-video:hover { border-color: var(--white); background: rgba(255,255,255,0.07); }
+.play-ring {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.play-ring svg { margin-left: 2px; }
+/* Scroll cue */
+.hero-scroll-cue {
+  position: absolute;
+  right: 56px;
+  bottom: 88px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  writing-mode: vertical-rl;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+.hero-scroll-cue::after {
+  content: '';
+  display: block;
+  width: 1px;
+  height: 52px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.25) 0%, transparent 100%);
+  margin-top: 6px;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 2. WHO WE ARE                                               */
+/* ═══════════════════════════════════════════════════════════ */
+.who-we-are {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.who-photo {
+  min-height: 620px;
+}
+.who-content {
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  padding: 96px 80px;
+}
+.who-inner { max-width: 500px; }
+.who-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(26px, 2.8vw, 42px);
+  line-height: 1.08;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--charcoal);
+  margin-bottom: 30px;
+}
+.who-body {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.78;
+  color: #444440;
+  margin-bottom: 44px;
+}
+.who-stat-row {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 44px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(26,26,24,0.1);
+}
+.who-stat-num {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 38px;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.who-stat-label {
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: #888880;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 3. OUR PROCESS                                              */
+/* ═══════════════════════════════════════════════════════════ */
+.our-process {
+  background: var(--off-white);
+  padding: 108px 0;
+}
+.process-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 88px;
+  align-items: center;
+}
+/* SVG process ring */
+.process-ring-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.process-svg-wrap {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto 36px;
+}
+.process-svg-wrap svg { width: 100%; height: auto; }
+.process-steps-linear {
+  display: flex;
+  gap: 0;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 360px;
+  overflow: visible;
+}
+.process-step-dot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  position: relative;
+}
+.process-step-dot:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: calc(50% + 14px);
+  width: calc(100% - 28px);
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.3;
+}
+.step-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gold);
+  background: var(--off-white);
+  position: relative;
+  z-index: 1;
+}
+.step-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #666660;
+  text-align: center;
+  line-height: 1.3;
+}
+/* Pillars right column */
+.process-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: clamp(26px, 2.5vw, 38px);
+  text-transform: uppercase;
+  color: var(--charcoal);
+  margin-bottom: 44px;
+  line-height: 1.05;
+}
+.pillars { display: flex; flex-direction: column; gap: 30px; }
+.pillar {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid rgba(26,26,24,0.08);
+}
+.pillar:last-child { border-bottom: none; padding-bottom: 0; }
+.pillar-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+}
+.pillar-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--charcoal);
+  margin-bottom: 5px;
+}
+.pillar-desc {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.65;
+  color: #5a5a52;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 4. FEATURED PROJECT                                         */
+/* ═══════════════════════════════════════════════════════════ */
+.featured-project {
+  position: relative;
+  height: 72vh;
+  min-height: 520px;
+  display: flex;
+  align-items: flex-end;
+}
+.featured-project .photo-bg { position: absolute; inset: 0; }
+.featured-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(26,26,24,0.92) 0%,
+    rgba(26,26,24,0.35) 52%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+.featured-badge {
+  position: absolute;
+  top: 52px;
+  left: 56px;
+  z-index: 3;
+  background: var(--gold);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--charcoal);
+  padding: 8px 18px;
+}
+.featured-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 56px 72px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: flex-end;
+}
+.featured-location {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.featured-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(36px, 4.5vw, 66px);
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+.featured-right {}
+.featured-desc {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.73;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 30px;
+}
+.featured-meta-row {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+.featured-kv {}
+.featured-kv-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 3px;
+}
+.featured-kv-val {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 5. OUR WORK                                                 */
+/* ═══════════════════════════════════════════════════════════ */
+.our-work { background: var(--charcoal); }
+.work-header {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 108px 56px 72px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 80px;
+  align-items: end;
+}
+.work-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(56px, 8vw, 112px);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--white);
+  white-space: nowrap;
+}
+.work-right { max-width: 480px; }
+.work-body {
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.72;
+  color: rgba(255,255,255,0.58);
+  margin-bottom: 24px;
+}
+.market-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 36px;
+}
+.market-tag {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid rgba(200,168,90,0.28);
+  padding: 6px 16px;
+}
+/* Photo grid */
+.work-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+.work-thumb {
+  position: relative;
+  height: 400px;
+  overflow: hidden;
+}
+.work-thumb .photo-bg { position: absolute; inset: 0; }
+.work-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(26,26,24,0.85) 0%, rgba(26,26,24,0.1) 55%, transparent 100%);
+  z-index: 1;
+  transition: opacity 0.3s;
+}
+.work-thumb:hover .work-thumb-overlay { opacity: 0.55; }
+.work-thumb-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 2;
+  padding: 28px 28px 28px;
+}
+.work-thumb-market {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 5px;
+}
+.work-thumb-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--white);
+}
+/* Pagination */
+.work-pagination {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 30px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 24px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.pg-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+.pg-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  padding: 8px 0;
+  transition: color 0.18s;
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+.pg-btn:hover { color: var(--gold); }
+.pg-div {
+  width: 1px;
+  height: 18px;
+  background: rgba(255,255,255,0.14);
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 6. MEET OUR TEAM                                            */
+/* ═══════════════════════════════════════════════════════════ */
+.meet-team {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.team-photo { min-height: 540px; }
+.team-card {
+  background: var(--charcoal-mid);
+  display: flex;
+  align-items: center;
+  padding: 96px 80px;
+}
+.team-inner { max-width: 440px; }
+.team-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: clamp(30px, 3vw, 48px);
+  line-height: 0.98;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.team-title {
+  font-size: 14px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.42);
+  margin-bottom: 28px;
+  letter-spacing: 0.03em;
+}
+.team-bio {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 40px;
+}
+.team-contact-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 40px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.09);
+}
+.team-contact-link {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.45);
+  text-decoration: none;
+  transition: color 0.18s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.team-contact-link:hover { color: var(--gold); }
+
+/* ═══════════════════════════════════════════════════════════ */
+/* 7. FOOTER                                                   */
+/* ═══════════════════════════════════════════════════════════ */
+.footer {
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+.footer-top {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 80px 56px 72px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.8fr 0.9fr;
+  gap: 48px;
+}
+/* Col 1: Brand + Offices */
+.footer-logo-name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: 0.06em;
+  color: var(--gold);
+  line-height: 1;
+}
+.footer-logo-div {
+  width: 36px;
+  height: 1.5px;
+  background: var(--gold);
+  opacity: 0.4;
+  margin: 10px 0;
+}
+.footer-logo-sub {
+  font-family: 'Barlow', sans-serif;
+  font-weight: 300;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(200,168,90,0.42);
+  margin-bottom: 22px;
+}
+.footer-tagline {
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.38);
+  margin-bottom: 24px;
+  max-width: 240px;
+}
+.footer-address {
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.85;
+  color: rgba(255,255,255,0.38);
+  font-style: normal;
+}
+/* Col 2: Contacts */
+.footer-col-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 22px;
+}
+.contact-person { margin-bottom: 24px; }
+.contact-role {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.28);
+  margin-bottom: 4px;
+}
+.contact-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.contact-detail {
+  font-size: 13px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.42);
+  text-decoration: none;
+  display: block;
+  transition: color 0.18s;
+}
+.contact-detail:hover { color: var(--gold); }
+/* Col 3: Contact form */
+.footer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+.footer-input,
+.footer-select,
+.footer-textarea {
+  background: rgba(255,255,255,0.045);
+  border: 1px solid rgba(255,255,255,0.09);
+  padding: 11px 14px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--white);
+  outline: none;
+  transition: border-color 0.18s;
+  width: 100%;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+.footer-input::placeholder,
+.footer-textarea::placeholder { color: rgba(255,255,255,0.22); }
+.footer-input:focus,
+.footer-select:focus,
+.footer-textarea:focus { border-color: var(--gold); }
+.footer-select {
+  color: rgba(255,255,255,0.22);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(200,168,90,0.5)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+.footer-select option { background: var(--charcoal); color: var(--white); }
+.footer-textarea {
+  resize: none;
+  height: 88px;
+}
+.footer-submit {
+  align-self: flex-start;
+  background: var(--gold);
+  color: var(--charcoal);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border: none;
+  padding: 13px 28px;
+  cursor: pointer;
+  transition: background 0.18s;
+  border-radius: 0;
+}
+.footer-submit:hover { background: var(--gold-dark); }
+/* Col 4: Social */
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.social-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: rgba(255,255,255,0.38);
+  text-decoration: none;
+  transition: color 0.18s;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.social-row:hover { color: var(--gold); }
+.social-box {
+  width: 34px;
+  height: 34px;
+  border: 1px solid rgba(255,255,255,0.14);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color 0.18s;
+}
+.social-row:hover .social-box { border-color: rgba(200,168,90,0.5); }
+/* Footer bottom bar */
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 24px 56px;
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.footer-copy,
+.footer-links {
+  font-size: 12px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.27);
+}
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+.footer-links a {
+  color: rgba(255,255,255,0.27);
+  text-decoration: none;
+  transition: color 0.18s;
+}
+.footer-links a:hover { color: var(--gold); }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .container, .nav-inner { padding: 0 40px; }
+  .who-content { padding: 80px 56px; }
+  .process-grid { gap: 60px; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .work-header { gap: 48px; }
+}
+
+@media (max-width: 880px) {
+  :root { --nav-h: 64px; }
+  .nav-links, .nav-cta { display: none; }
+  .nav-toggle { display: flex; }
+  .nav-inner { padding: 0 24px; }
+
+  .hero { padding-bottom: 64px; }
+  .hero-content, .featured-content, .featured-badge,
+  .work-header, .work-pagination, .footer-top, .footer-bottom { padding-left: 28px; padding-right: 28px; }
+  .featured-badge { left: 28px; top: 28px; }
+
+  .who-we-are { grid-template-columns: 1fr; }
+  .who-photo { min-height: 360px; }
+  .who-content { padding: 64px 28px; }
+  .who-inner { max-width: 100%; }
+
+  .our-process { padding: 80px 0; }
+  .our-process .container { padding: 0 28px; }
+  .process-grid { grid-template-columns: 1fr; gap: 60px; }
+
+  .featured-content { grid-template-columns: 1fr; }
+
+  .work-header { grid-template-columns: 1fr; padding-top: 80px; padding-bottom: 56px; }
+  .work-headline { white-space: normal; }
+  .work-right { max-width: 100%; }
+  .work-grid { grid-template-columns: 1fr; }
+  .work-thumb { height: 300px; }
+  .work-pagination { padding: 24px 28px; }
+
+  .meet-team { grid-template-columns: 1fr; }
+  .team-photo { min-height: 300px; }
+  .team-card { padding: 64px 28px; }
+  .team-inner { max-width: 100%; }
+
+  .footer-top { grid-template-columns: 1fr 1fr; padding-left: 28px; padding-right: 28px; }
+  .footer-bottom { padding: 20px 28px; flex-direction: column; text-align: center; }
+  .footer-links { justify-content: center; }
+
+  .hero-scroll-cue { display: none; }
+}
+
+@media (max-width: 600px) {
+  .hero-headline { font-size: clamp(44px, 12vw, 64px); }
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+  .who-stat-row { flex-direction: column; gap: 20px; }
+  .featured-meta-row { flex-direction: column; gap: 12px; }
+  .footer-top { grid-template-columns: 1fr; }
+  .form-row-2 { grid-template-columns: 1fr; }
+  .work-header { padding-top: 64px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════════════════ -->
+<header class="nav" id="nav" role="banner">
+  <div class="nav-inner">
+    <a href="/" class="nav-logo" aria-label="Tyche RSE Construction home">
+      <div class="nav-logo-name">TYCHE RSE</div>
+      <span class="nav-logo-sub">Construction</span>
+    </a>
+
+    <ul class="nav-links" role="list">
+      <li><a href="#who-we-are">About</a></li>
+      <li><a href="#our-process">Our Process</a></li>
+      <li><a href="#our-work">Our Work</a></li>
+      <li><a href="#meet-team">Team</a></li>
+      <li><a href="#footer">Contact</a></li>
+    </ul>
+
+    <a href="#footer" class="btn btn-gold nav-cta">Contact Us</a>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Mobile nav drawer -->
+<nav class="nav-mobile" id="navMobile" aria-label="Mobile navigation">
+  <a href="#who-we-are">About</a>
+  <a href="#our-process">Our Process</a>
+  <a href="#our-work">Our Work</a>
+  <a href="#meet-team">Team</a>
+  <a href="#footer" class="btn btn-gold">Contact Us</a>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     1. HERO
+══════════════════════════════════════════════════════════ -->
+<section class="hero" aria-labelledby="hero-headline">
+  <!-- Photo placeholder -->
+  <div class="photo-bg" style="position:absolute;inset:0;" aria-hidden="true">
+    <div class="photo-tag">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span>Aerial Jobsite Photography</span>
+      <span style="margin-top:4px;font-size:8.5px;opacity:0.5;">Wide-angle drone shot — active construction site or completed structure</span>
+    </div>
+  </div>
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <div class="eyebrow">
+      <span class="eyebrow-line" aria-hidden="true"></span>
+      Integrated Construction &amp; Energy
+    </div>
+    <h1 class="hero-headline" id="hero-headline">
+      Integrated<br>Construction &amp;<br>Energy Solutions
+    </h1>
+    <p class="hero-sub">From pre-construction planning through mechanical and energy commissioning — Tyche RSE delivers on every phase.</p>
+    <div class="hero-actions">
+      <a href="#our-work" class="btn btn-video" aria-label="Watch project overview video">
+        <span class="play-ring" aria-hidden="true">
+          <svg width="10" height="12" viewBox="0 0 10 12" fill="white" aria-hidden="true"><polygon points="0,0 10,6 0,12"/></svg>
+        </span>
+        Watch Video
+      </a>
+      <a href="#who-we-are" class="btn btn-gold">About Tyche RSE</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll-cue" aria-hidden="true">Scroll</div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     2. WHO WE ARE
+══════════════════════════════════════════════════════════ -->
+<section class="who-we-are" id="who-we-are" aria-labelledby="who-headline">
+  <!-- Left: photo -->
+  <div class="who-photo photo-bg" role="img" aria-label="Construction worker close-up photograph placeholder">
+    <div class="photo-tag">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span>Worker Close-Up</span>
+      <span style="margin-top:4px;font-size:8.5px;opacity:0.5;">Craftsman on site — detail shot of hands, tools, or hard hat silhouette</span>
+    </div>
+  </div>
+
+  <!-- Right: content -->
+  <div class="who-content">
+    <div class="who-inner">
+      <div class="eyebrow">
+        <span class="eyebrow-line" aria-hidden="true"></span>
+        Who We Are
+      </div>
+      <h2 class="who-headline" id="who-headline">Committed, accountable, performance-driven builders.</h2>
+      <p class="who-body">Tyche RSE Construction is a full-service general contractor specializing in integrated construction and mechanical energy solutions across New Jersey and the greater tri-state area. We bring disciplined pre-construction planning, self-performed mechanical work, and a relentless focus on commissioning excellence to every project we touch.<br><br>Whether it's a government facility, institutional campus, or commercial development — we deliver on schedule, on budget, and to specification.</p>
+
+      <div class="who-stat-row">
+        <div>
+          <div class="who-stat-num">15+</div>
+          <div class="who-stat-label">Years of Service</div>
+        </div>
+        <div>
+          <div class="who-stat-num">$200M+</div>
+          <div class="who-stat-label">Projects Delivered</div>
+        </div>
+        <div>
+          <div class="who-stat-num">4</div>
+          <div class="who-stat-label">Market Sectors</div>
+        </div>
+      </div>
+
+      <a href="#our-process" class="btn btn-outline-gold">
+        Learn More
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     3. OUR PROCESS
+══════════════════════════════════════════════════════════ -->
+<section class="our-process" id="our-process" aria-labelledby="process-headline">
+  <div class="container">
+    <div class="process-grid">
+
+      <!-- Left: circular process visual -->
+      <div class="process-ring-col">
+        <div class="process-svg-wrap" aria-label="Tyche RSE five-phase process cycle diagram" role="img">
+          <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
+            <!-- Outer dashed ring -->
+            <circle cx="180" cy="180" r="122" fill="none" stroke="rgba(200,168,90,0.18)" stroke-width="1" stroke-dasharray="5 9"/>
+            <!-- Pentagon connecting lines -->
+            <polygon points="180,58 302,140 255,284 105,284 58,140"
+                     fill="none" stroke="rgba(200,168,90,0.15)" stroke-width="1"/>
+            <!-- Center -->
+            <circle cx="180" cy="180" r="48" fill="rgba(200,168,90,0.07)" stroke="rgba(200,168,90,0.35)" stroke-width="1.5"/>
+            <text x="180" y="176" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="11" fill="rgba(200,168,90,0.85)" letter-spacing="2">TYCHE RSE</text>
+            <text x="180" y="192" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="500" font-size="9" fill="rgba(200,168,90,0.5)" letter-spacing="1.5">PROCESS</text>
+
+            <!-- Node 1: Pre-Construction (top) -->
+            <circle cx="180" cy="58" r="32" fill="#f5f5f0" stroke="#c8a85a" stroke-width="2"/>
+            <text x="180" y="52" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="9" fill="#c8a85a" letter-spacing="1.5">01</text>
+            <text x="180" y="64" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="8" fill="#1a1a18" letter-spacing="0.5">PRE-CON</text>
+
+            <!-- Node 2: Design-Assist (top-right) -->
+            <circle cx="302" cy="140" r="32" fill="#f5f5f0" stroke="rgba(200,168,90,0.5)" stroke-width="1.5"/>
+            <text x="302" y="134" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="9" fill="#c8a85a" letter-spacing="1.5">02</text>
+            <text x="302" y="146" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="8" fill="#1a1a18" letter-spacing="0.5">DESIGN</text>
+
+            <!-- Node 3: Construction (bottom-right) -->
+            <circle cx="255" cy="284" r="32" fill="#f5f5f0" stroke="rgba(200,168,90,0.5)" stroke-width="1.5"/>
+            <text x="255" y="278" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="9" fill="#c8a85a" letter-spacing="1.5">03</text>
+            <text x="255" y="290" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="8" fill="#1a1a18" letter-spacing="0.5">BUILD</text>
+
+            <!-- Node 4: Mechanical & Energy (bottom-left) -->
+            <circle cx="105" cy="284" r="32" fill="#f5f5f0" stroke="rgba(200,168,90,0.5)" stroke-width="1.5"/>
+            <text x="105" y="278" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="9" fill="#c8a85a" letter-spacing="1.5">04</text>
+            <text x="105" y="290" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="8" fill="#1a1a18" letter-spacing="0.5">MECH/ENERGY</text>
+
+            <!-- Node 5: Commissioning (top-left) -->
+            <circle cx="58" cy="140" r="32" fill="#f5f5f0" stroke="rgba(200,168,90,0.5)" stroke-width="1.5"/>
+            <text x="58" y="134" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="9" fill="#c8a85a" letter-spacing="1.5">05</text>
+            <text x="58" y="146" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="8" fill="#1a1a18" letter-spacing="0.5">COMMISSION</text>
+
+            <!-- Directional arrow between node 1 and 2 -->
+            <polygon points="240,88 250,100 236,100" fill="rgba(200,168,90,0.5)"/>
+          </svg>
+        </div>
+
+        <!-- Linear step labels below SVG -->
+        <div class="process-steps-linear" aria-hidden="true">
+          <div class="process-step-dot">
+            <div class="step-circle">01</div>
+            <div class="step-label">Pre-<br>Construction</div>
+          </div>
+          <div class="process-step-dot">
+            <div class="step-circle">02</div>
+            <div class="step-label">Design-<br>Assist</div>
+          </div>
+          <div class="process-step-dot">
+            <div class="step-circle">03</div>
+            <div class="step-label">Construction</div>
+          </div>
+          <div class="process-step-dot">
+            <div class="step-circle">04</div>
+            <div class="step-label">Mech &amp;<br>Energy</div>
+          </div>
+          <div class="process-step-dot">
+            <div class="step-circle">05</div>
+            <div class="step-label">Commis-<br>sioning</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: pillars -->
+      <div>
+        <div class="eyebrow">
+          <span class="eyebrow-line" aria-hidden="true"></span>
+          How We Build
+        </div>
+        <h2 class="process-headline" id="process-headline">Five pillars.<br>Every project.</h2>
+
+        <div class="pillars" role="list">
+          <!-- Quality -->
+          <div class="pillar" role="listitem">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div>
+              <div class="pillar-name">Quality</div>
+              <div class="pillar-desc">Rigorous QA/QC protocols at every phase. Our work stands the test of time and the scrutiny of the most demanding owners.</div>
+            </div>
+          </div>
+
+          <!-- Integrated Delivery -->
+          <div class="pillar" role="listitem">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="1"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2M12 12v4M10 14h4"/></svg>
+            </div>
+            <div>
+              <div class="pillar-name">Integrated Delivery</div>
+              <div class="pillar-desc">Design, construction, and mechanical systems teams aligned from day one — reducing risk and accelerating schedules.</div>
+            </div>
+          </div>
+
+          <!-- Pre-Construction -->
+          <div class="pillar" role="listitem">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <div>
+              <div class="pillar-name">Pre-Construction</div>
+              <div class="pillar-desc">Detailed estimating, constructability review, and phasing analysis before a shovel hits the ground. No surprises.</div>
+            </div>
+          </div>
+
+          <!-- Technology -->
+          <div class="pillar" role="listitem">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="1"/><path d="M8 21h8M12 17v4"/></svg>
+            </div>
+            <div>
+              <div class="pillar-name">Technology</div>
+              <div class="pillar-desc">BIM coordination, real-time project dashboards, and digital closeout documentation give owners full transparency throughout.</div>
+            </div>
+          </div>
+
+          <!-- Safety -->
+          <div class="pillar" role="listitem">
+            <div class="pillar-icon" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <div class="pillar-name">Safety</div>
+              <div class="pillar-desc">Zero-incident culture with full EMR tracking, daily safety briefings, and OSHA compliance embedded into every site operation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     4. FEATURED PROJECT
+══════════════════════════════════════════════════════════ -->
+<section class="featured-project" aria-labelledby="featured-name">
+  <div class="photo-bg" style="position:absolute;inset:0;" role="img" aria-label="Completed building exterior photograph placeholder">
+    <div class="photo-tag">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span>Completed Building Exterior</span>
+      <span style="margin-top:4px;font-size:8.5px;opacity:0.5;">Dramatic dusk or overcast light — architectural exterior, wide angle</span>
+    </div>
+  </div>
+  <div class="featured-overlay" aria-hidden="true"></div>
+
+  <!-- Badge -->
+  <div class="featured-badge" aria-hidden="true">Featured Project</div>
+
+  <div class="featured-content">
+    <div>
+      <div class="featured-location">South Orange, New Jersey</div>
+      <h2 class="featured-name" id="featured-name">South Orange<br>Municipal Center</h2>
+    </div>
+    <div class="featured-right">
+      <p class="featured-desc">A complete renovation and energy modernization of the South Orange municipal facility, encompassing new mechanical systems, HVAC upgrades, and building envelope improvements delivering 40% energy reduction while keeping operations running throughout construction.</p>
+      <div class="featured-meta-row">
+        <div class="featured-kv">
+          <div class="featured-kv-label">Market</div>
+          <div class="featured-kv-val">Government</div>
+        </div>
+        <div class="featured-kv">
+          <div class="featured-kv-label">Delivery</div>
+          <div class="featured-kv-val">Design-Build</div>
+        </div>
+        <div class="featured-kv">
+          <div class="featured-kv-label">Status</div>
+          <div class="featured-kv-val">Completed</div>
+        </div>
+      </div>
+      <a href="#our-work" class="btn btn-outline-white">
+        View Project
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     5. OUR WORK
+══════════════════════════════════════════════════════════ -->
+<section class="our-work" id="our-work" aria-labelledby="work-headline">
+  <div class="work-header">
+    <h2 class="work-headline" id="work-headline">Our<br>Work</h2>
+    <div class="work-right">
+      <div class="eyebrow" style="color:var(--gold);">
+        <span class="eyebrow-line" aria-hidden="true"></span>
+        Markets Served
+      </div>
+      <p class="work-body">Tyche RSE delivers complex construction programs across four core markets — each requiring a distinct understanding of operational constraints, regulatory requirements, and long-term performance standards.</p>
+      <div class="market-tags" role="list">
+        <span class="market-tag" role="listitem">Government</span>
+        <span class="market-tag" role="listitem">Institutional</span>
+        <span class="market-tag" role="listitem">Commercial</span>
+        <span class="market-tag" role="listitem">Multifamily</span>
+      </div>
+      <a href="#footer" class="btn btn-outline-gold">
+        Start a Project
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 2-up photo grid -->
+  <div class="work-grid">
+    <!-- Thumb 1 -->
+    <div class="work-thumb">
+      <div class="photo-bg" style="position:absolute;inset:0;" role="img" aria-label="Government project interior photograph placeholder">
+        <div class="photo-tag">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>Project Interior — Government</span>
+        </div>
+      </div>
+      <div class="work-thumb-overlay" aria-hidden="true"></div>
+      <div class="work-thumb-caption">
+        <div class="work-thumb-market">Government</div>
+        <div class="work-thumb-name">Morris County Admin Building</div>
+      </div>
+    </div>
+
+    <!-- Thumb 2 -->
+    <div class="work-thumb">
+      <div class="photo-bg" style="position:absolute;inset:0;background:linear-gradient(160deg,#1f2320 0%,#141814 100%);" role="img" aria-label="Institutional campus exterior photograph placeholder">
+        <div class="photo-tag">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>Campus Exterior — Institutional</span>
+        </div>
+      </div>
+      <div class="work-thumb-overlay" aria-hidden="true"></div>
+      <div class="work-thumb-caption">
+        <div class="work-thumb-market">Institutional</div>
+        <div class="work-thumb-name">Seton Hall Science Hall Renovation</div>
+      </div>
+    </div>
+
+    <!-- Thumb 3 -->
+    <div class="work-thumb">
+      <div class="photo-bg" style="position:absolute;inset:0;background:linear-gradient(160deg,#22201e 0%,#161412 100%);" role="img" aria-label="Commercial exterior photograph placeholder">
+        <div class="photo-tag">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>Commercial Exterior</span>
+        </div>
+      </div>
+      <div class="work-thumb-overlay" aria-hidden="true"></div>
+      <div class="work-thumb-caption">
+        <div class="work-thumb-market">Commercial</div>
+        <div class="work-thumb-name">Newark Office Tower — MEP Retrofit</div>
+      </div>
+    </div>
+
+    <!-- Thumb 4 -->
+    <div class="work-thumb">
+      <div class="photo-bg" style="position:absolute;inset:0;background:linear-gradient(160deg,#201e1c 0%,#151310 100%);" role="img" aria-label="Multifamily residential exterior photograph placeholder">
+        <div class="photo-tag">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <span>Residential Exterior — Multifamily</span>
+        </div>
+      </div>
+      <div class="work-thumb-overlay" aria-hidden="true"></div>
+      <div class="work-thumb-caption">
+        <div class="work-thumb-market">Multifamily</div>
+        <div class="work-thumb-name">Essex Commons — 240-Unit Development</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="work-pagination">
+    <span class="pg-label">1 – 4 of 18 Projects</span>
+    <button class="pg-btn" type="button" aria-label="Previous projects">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Prev
+    </button>
+    <div class="pg-div" aria-hidden="true"></div>
+    <button class="pg-btn" type="button" aria-label="Next projects">
+      Next
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     6. MEET OUR TEAM
+══════════════════════════════════════════════════════════ -->
+<section class="meet-team" id="meet-team" aria-labelledby="team-name">
+  <!-- Left: site photo -->
+  <div class="team-photo photo-bg" role="img" aria-label="Project site or team portrait photograph placeholder">
+    <div class="photo-tag">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      <span>Team Portrait or Active Jobsite</span>
+      <span style="margin-top:4px;font-size:8.5px;opacity:0.5;">Leadership headshot or crew at work — editorial style</span>
+    </div>
+  </div>
+
+  <!-- Right: dark card -->
+  <div class="team-card">
+    <div class="team-inner">
+      <div class="eyebrow" style="color:var(--gold);">
+        <span class="eyebrow-line" aria-hidden="true"></span>
+        Meet Our Team
+      </div>
+      <h2 class="team-name" id="team-name">Michael<br>Andrade</h2>
+      <div class="team-title">Principal &amp; Project Executive</div>
+      <p class="team-bio">Michael leads project execution at Tyche RSE, bringing 20+ years of experience across government, institutional, and commercial construction. His background in mechanical systems and integrated delivery informs every project our firm undertakes.</p>
+
+      <div class="team-contact-row">
+        <a href="tel:+18889928377" class="team-contact-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8a19.79 19.79 0 01-3.07-8.67A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.15 6.15l1.27-.83a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          (888) 992-8377
+        </a>
+        <a href="mailto:info@tycherse.com" class="team-contact-link">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          info@tycherse.com
+        </a>
+      </div>
+
+      <a href="#footer" class="btn btn-gold">
+        Connect With Our Team
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     7. FOOTER
+══════════════════════════════════════════════════════════ -->
+<footer class="footer" id="footer" role="contentinfo">
+  <div class="footer-top">
+
+    <!-- Col 1: Brand + Offices -->
+    <div>
+      <div class="footer-logo-name">TYCHE RSE</div>
+      <div class="footer-logo-div" aria-hidden="true"></div>
+      <div class="footer-logo-sub">Construction</div>
+      <p class="footer-tagline">Integrated construction and energy solutions. Committed, accountable, performance-driven.</p>
+      <address class="footer-address">
+        76 South Ave, Suite ST-10<br>
+        South Orange, NJ 07079<br><br>
+        <a href="https://tycherse.com" style="color:rgba(200,168,90,0.5);text-decoration:none;">tycherse.com</a>
+      </address>
+    </div>
+
+    <!-- Col 2: Key Contacts -->
+    <div>
+      <div class="footer-col-title">Contacts</div>
+
+      <div class="contact-person">
+        <div class="contact-role">Business Development</div>
+        <div class="contact-name">Michael Andrade</div>
+        <a href="tel:+18889928377" class="contact-detail">(888) 992-8377</a>
+        <a href="mailto:info@tycherse.com" class="contact-detail">info@tycherse.com</a>
+      </div>
+
+      <div class="contact-person">
+        <div class="contact-role">Partnerships &amp; Subcontracting</div>
+        <div class="contact-name">Tyche RSE Team</div>
+        <a href="mailto:info@tycherse.com" class="contact-detail">info@tycherse.com</a>
+        <a href="https://tycherse.com" class="contact-detail">tycherse.com</a>
+      </div>
+    </div>
+
+    <!-- Col 3: Contact Form -->
+    <div>
+      <div class="footer-col-title">Contact Us</div>
+      <form class="footer-form" id="contact-form" novalidate aria-label="Contact form">
+        <div class="form-row-2">
+          <input class="footer-input" type="text" id="contact-name" name="name" placeholder="Your Name" autocomplete="name" required>
+          <input class="footer-input" type="tel" id="contact-phone" name="phone" placeholder="Phone Number" autocomplete="tel">
+        </div>
+        <select class="footer-select" id="contact-reason" name="reason" required aria-label="Reason for contact">
+          <option value="" disabled selected>Reason for Contact</option>
+          <option>General Inquiry</option>
+          <option>Project Bid Request</option>
+          <option>Subcontractor Partnership</option>
+          <option>Government Contract</option>
+          <option>Other</option>
+        </select>
+        <textarea class="footer-textarea" id="contact-message" name="message" placeholder="Tell us about your project…" required aria-label="Message"></textarea>
+        <button type="submit" class="footer-submit" id="contact-submit">
+          Send Message
+        </button>
+        <p id="form-status" style="font-size:12px;color:rgba(200,168,90,0.7);display:none;"></p>
+      </form>
+    </div>
+
+    <!-- Col 4: Social -->
+    <div>
+      <div class="footer-col-title">Follow Us</div>
+      <div class="footer-social">
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-row" aria-label="Tyche RSE on LinkedIn">
+          <div class="social-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+          </div>
+          LinkedIn
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-row" aria-label="Tyche RSE on Instagram">
+          <div class="social-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </div>
+          Instagram
+        </a>
+        <a href="mailto:info@tycherse.com" class="social-row" aria-label="Email Tyche RSE">
+          <div class="social-box">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          Email Us
+        </a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2026 Tyche RSE Construction. All rights reserved.</p>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="mailto:info@tycherse.com">info@tycherse.com</a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     JS
+══════════════════════════════════════════════════════════ -->
+<script>
+/* ── Sticky nav ── */
+const nav = document.getElementById('nav');
+let lastY = 0;
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  nav.classList.toggle('scrolled', y > 40);
+  lastY = y;
+}, { passive: true });
+
+/* ── Mobile toggle ── */
+const toggle = document.getElementById('navToggle');
+const drawer = document.getElementById('navMobile');
+let drawerOpen = false;
+
+toggle.addEventListener('click', () => {
+  drawerOpen = !drawerOpen;
+  drawer.classList.toggle('open', drawerOpen);
+  toggle.setAttribute('aria-expanded', String(drawerOpen));
+  toggle.querySelectorAll('span')[0].style.transform = drawerOpen ? 'rotate(45deg) translate(5px,5px)' : '';
+  toggle.querySelectorAll('span')[1].style.opacity  = drawerOpen ? '0' : '1';
+  toggle.querySelectorAll('span')[2].style.transform = drawerOpen ? 'rotate(-45deg) translate(5px,-5px)' : '';
+});
+
+drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  drawerOpen = false;
+  drawer.classList.remove('open');
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+}));
+
+/* ── Contact form ── */
+const contactForm   = document.getElementById('contact-form');
+const contactSubmit = document.getElementById('contact-submit');
+const formStatus    = document.getElementById('form-status');
+
+contactForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const name    = document.getElementById('contact-name').value.trim();
+  const message = document.getElementById('contact-message').value.trim();
+  if (!name || !message) {
+    formStatus.textContent = 'Please fill in your name and message.';
+    formStatus.style.color = 'rgba(220,80,80,0.8)';
+    formStatus.style.display = 'block';
+    return;
+  }
+  contactSubmit.textContent = 'Sending…';
+  contactSubmit.disabled = true;
+  /* Replace with your backend / Supabase / Formspree endpoint */
+  await new Promise(r => setTimeout(r, 1200));
+  formStatus.textContent = 'Message received. We'll be in touch shortly.';
+  formStatus.style.color = 'rgba(200,168,90,0.85)';
+  formStatus.style.display = 'block';
+  contactSubmit.textContent = 'Sent ✓';
+});
+</script>
+</body>
+</html>
