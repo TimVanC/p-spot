@@ -13,7 +13,7 @@ import { useRouter } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import MapboxGL from '@rnmapbox/maps';
+import MapboxGL from '../../lib/mapbox';
 import { supabase } from '../../lib/supabase';
 import { colors, fontNames } from '../../constants/theme';
 import { Spot } from '../../types/spot';
@@ -67,6 +67,9 @@ const pinStyles = StyleSheet.create({
     marginTop: -1,
   },
 });
+
+// Capture as a local const so TypeScript can narrow the null check in JSX
+const GL = MapboxGL;
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -216,27 +219,36 @@ export default function HomeScreen() {
             <View style={styles.center}>
               <ActivityIndicator color={colors.primary} size="large" />
             </View>
-          ) : (
-            <MapboxGL.MapView
+          ) : GL ? (
+            <GL.MapView
               style={styles.map}
-              styleURL={MapboxGL.StyleURL.Light}
+              styleURL={GL.StyleURL.Light}
               logoEnabled={false}
               attributionEnabled={false}
             >
-              <MapboxGL.Camera
+              <GL.Camera
                 defaultSettings={{ centerCoordinate: [-98.5, 39.5], zoomLevel: 3 }}
               />
               {spots.map((spot) => (
-                <MapboxGL.PointAnnotation
+                <GL.PointAnnotation
                   key={spot.id}
                   id={spot.id}
                   coordinate={[spot.lng, spot.lat]}
                   onSelected={() => router.push(`/spot/${spot.id}`)}
                 >
                   <ScorePin score={spot.score_total} />
-                </MapboxGL.PointAnnotation>
+                </GL.PointAnnotation>
               ))}
-            </MapboxGL.MapView>
+            </GL.MapView>
+          ) : (
+            <View style={styles.mapFallback}>
+              <Ionicons name="map-outline" size={52} color="#ccc" />
+              <Text style={styles.mapFallbackTitle}>Map unavailable in Expo Go</Text>
+              <Text style={styles.mapFallbackSub}>
+                Run a development build to enable the map.{'\n'}
+                eas build --profile development --platform ios
+              </Text>
+            </View>
           )
         ) : (
           <FlatList
@@ -307,6 +319,15 @@ const styles = StyleSheet.create({
   content: { flex: 1 },
   map: { flex: 1 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  mapFallback: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingHorizontal: 32,
+  },
+  mapFallbackTitle: { fontSize: 16, fontWeight: '600', color: '#999', textAlign: 'center' },
+  mapFallbackSub: { fontSize: 12, color: '#bbb', textAlign: 'center', lineHeight: 18 },
   listContent: { paddingHorizontal: 18, paddingTop: 4, paddingBottom: 32 },
   separator: { height: 1, backgroundColor: colors.light, marginVertical: 2 },
   empty: { paddingTop: 60, alignItems: 'center' },
