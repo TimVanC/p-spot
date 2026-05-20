@@ -15,7 +15,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useSubmitStore } from '../stores/submitStore';
-import { fontNames, colors } from '../constants/theme';
+import { colors } from '../constants/theme';
 
 export default function ScoreRevealScreen() {
   const router = useRouter();
@@ -232,7 +232,6 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   scoreTotal: {
-    fontFamily: fontNames.syne,
     fontSize: 72,
     fontWeight: '800',
     color: '#B89A2E',
@@ -373,7 +372,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   overlayScore: {
-    fontFamily: fontNames.syne,
     fontSize: 96,
     fontWeight: '800',
     color: '#D4B84A',
