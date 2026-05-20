@@ -1,58 +1,60 @@
-import * as FileSystem from 'expo-file-system';
-import * as exifr from 'exifr';
 import { ExifData } from '../types/scoring';
 
 /**
- * Extracts GPS and timestamp EXIF data from a local image URI.
- * Returns null if GPS data is absent (screenshot, generated image, etc).
+ * Parses GPS + timestamp from the raw EXIF object returned by expo-image-picker
+ * when launched with `exif: true`. Returns null if GPS coords are absent.
+ *
+ * expo-image-picker returns GPS in one of two forms depending on platform:
+ *   - Decimal degrees directly (iOS newer): { GPSLatitude: number, GPSLongitude: number }
+ *   - DMS arrays (some Android/older): { GPSLatitude: [d,m,s], GPSLatitudeRef: 'N'|'S', … }
  */
-export async function extractExif(uri: string): Promise<ExifData | null> {
-  try {
-    const base64 = await FileSystem.readAsStringAsync(uri, {
-      encoding: 'base64' as const,
-    });
+export function parseImagePickerExif(
+  exif: Record<string, unknown>,
+): ExifData | null {
+  if (!exif) return null;
 
-    // Decode base64 → Uint8Array so exifr can parse the raw bytes
-    const binaryString = atob(base64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
+  let lat: number | null = null;
+  let lng: number | null = null;
 
-    const gps = await exifr.gps(bytes);
+  const rawLat = exif.GPSLatitude;
+  const rawLng = exif.GPSLongitude;
+  const latRef = exif.GPSLatitudeRef as string | undefined;
+  const lngRef = exif.GPSLongitudeRef as string | undefined;
 
-    if (!gps || gps.latitude == null || gps.longitude == null) {
-      return null;
-    }
+  if (typeof rawLat === 'number' && typeof rawLng === 'number') {
+    lat = rawLat;
+    lng = rawLng;
+  } else if (Array.isArray(rawLat) && Array.isArray(rawLng)) {
+    lat = dmsToDecimal(rawLat as number[], latRef ?? 'N');
+    lng = dmsToDecimal(rawLng as number[], lngRef ?? 'E');
+  }
 
-    // Try to get altitude and timestamp too
-    const parsed = await exifr.parse(bytes, {
-      gps: true,
-      exif: true,
-      tiff: true,
-    });
-
-    let altitudeFt: number | undefined;
-    if (parsed?.GPSAltitude != null) {
-      // GPSAltitude is in metres; convert to feet
-      altitudeFt = Math.round(parsed.GPSAltitude * 3.28084);
-    }
-
-    let timestamp: string | undefined;
-    if (parsed?.DateTimeOriginal) {
-      timestamp = new Date(parsed.DateTimeOriginal).toISOString();
-    } else if (parsed?.DateTime) {
-      timestamp = new Date(parsed.DateTime).toISOString();
-    }
-
-    return {
-      lat: gps.latitude,
-      lng: gps.longitude,
-      altitudeFt,
-      timestamp,
-    };
-  } catch (err) {
-    console.warn('[exif] Failed to parse EXIF:', err);
+  if (lat === null || lng === null || isNaN(lat) || isNaN(lng)) {
     return null;
   }
+
+  let altitudeFt: number | undefined;
+  if (typeof exif.GPSAltitude === 'number') {
+    altitudeFt = Math.round(exif.GPSAltitude * 3.28084);
+  }
+
+  let timestamp: string | undefined;
+  const dto = exif.DateTimeOriginal ?? exif.DateTime;
+  if (typeof dto === 'string' && dto.length > 0) {
+    // EXIF datetime format: "YYYY:MM:DD HH:MM:SS" → ISO
+    timestamp = dto.replace(/^(\d{4}):(\d{2}):(\d{2})/, '$1-$2-$3');
+    try {
+      timestamp = new Date(timestamp).toISOString();
+    } catch {
+      timestamp = undefined;
+    }
+  }
+
+  return { lat, lng, altitudeFt, timestamp };
+}
+
+function dmsToDecimal(dms: number[], ref: string): number {
+  const [degrees, minutes, seconds] = dms;
+  const decimal = degrees + minutes / 60 + (seconds ?? 0) / 3600;
+  return ref === 'S' || ref === 'W' ? -decimal : decimal;
 }

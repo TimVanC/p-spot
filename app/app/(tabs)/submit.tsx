@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { Ionicons } from '@expo/vector-icons';
-import { extractExif } from '../../lib/exif';
+import { parseImagePickerExif } from '../../lib/exif';
 import { useSubmitStore } from '../../stores/submitStore';
 import { Privacy } from '../../types/scoring';
 import { colors } from '../../constants/theme';
@@ -45,30 +45,30 @@ export default function SubmitScreen() {
   const [pendingBase64, setPendingBase64] = useState<string | null>(null);
   const [extracting, setExtracting] = useState(false);
 
-  const processImage = async (uri: string) => {
+  const processAsset = async (asset: ImagePicker.ImagePickerAsset) => {
     setExtracting(true);
     try {
-      const exif = await extractExif(uri);
+      const exif = asset.exif ? parseImagePickerExif(asset.exif as Record<string, unknown>) : null;
 
       if (!exif) {
         Alert.alert(
           'GPS required',
-          'Original photo required — screenshots don\'t count.',
+          "Original photo required — screenshots don't count.",
           [{ text: 'OK' }],
         );
         return;
       }
 
-      const base64 = await FileSystem.readAsStringAsync(uri, {
+      const base64 = await FileSystem.readAsStringAsync(asset.uri, {
         encoding: 'base64' as const,
       });
 
       setExifData(exif);
-      setPendingUri(uri);
+      setPendingUri(asset.uri);
       setPendingBase64(base64);
       setShowPrivacySheet(true);
     } catch (err) {
-      console.error('[submit] processImage error:', err);
+      console.error('[submit] processAsset error:', err);
       Alert.alert('Error', 'Could not read this photo. Please try another.');
     } finally {
       setExtracting(false);
@@ -86,10 +86,11 @@ export default function SubmitScreen() {
       mediaTypes: ['images'],
       allowsEditing: false,
       quality: 1,
+      exif: true,
     });
 
     if (!result.canceled && result.assets[0]) {
-      await processImage(result.assets[0].uri);
+      await processAsset(result.assets[0]);
     }
   };
 
@@ -104,10 +105,11 @@ export default function SubmitScreen() {
       mediaTypes: ['images'],
       allowsEditing: false,
       quality: 1,
+      exif: true,
     });
 
     if (!result.canceled && result.assets[0]) {
-      await processImage(result.assets[0].uri);
+      await processAsset(result.assets[0]);
     }
   };
 
@@ -125,12 +127,12 @@ export default function SubmitScreen() {
         <Text style={styles.subheading}>Rate the view. Claim the spot.</Text>
 
         {extracting ? (
-          <View style={styles.extractingContainer}>
+          <View style={styles.iconContainer}>
             <ActivityIndicator size="large" color={colors.mid} />
             <Text style={styles.extractingText}>Reading photo...</Text>
           </View>
         ) : (
-          <View style={styles.cameraContainer}>
+          <View style={styles.iconContainer}>
             <Ionicons name="camera-outline" size={64} color="#B89A2E" />
           </View>
         )}
@@ -224,24 +226,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 8,
   },
-  cameraContainer: {
+  iconContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
     backgroundColor: colors.light,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
     marginVertical: 8,
   },
-  extractingContainer: {
-    width: 120,
-    height: 120,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 12,
-  },
   extractingText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '400',
     color: colors.deep,
   },
