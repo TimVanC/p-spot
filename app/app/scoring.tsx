@@ -106,7 +106,10 @@ export default function ScoringScreen() {
         .getPublicUrl(storagePath);
 
       const imageUrl = publicUrlData.publicUrl;
-      const shareToken = crypto.randomUUID();
+      const shareToken = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+        const r = (Math.random() * 16) | 0;
+        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+      });
 
       const { data: spot, error: insertError } = await supabase
         .from('spots')
