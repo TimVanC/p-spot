@@ -67,13 +67,13 @@ export default function ScoreRevealScreen() {
 
     return [
       'P SPOT RECEIPT 🧾',
-      '――――――――――――――――',
+      '―――――――――――――',
       `Score: ${scoreResult.score_total}`,
       `Tier: ${scoreResult.score_tier}`,
       ...metricLines,
-      '――――――――――――――――',
+      '―――――――――――――',
       'Every great piss deserves a score.',
-      'pspot.app',
+      'https://www.pspot.app/',
     ].join('\n');
   };
 
