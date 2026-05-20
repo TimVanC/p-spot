@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Animated, Easing, TouchableOpacity } from 'reac
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabase'; // still needed for strike increment
 import { scoreSpot } from '../lib/claude';
 import { useSubmitStore } from '../stores/submitStore';
 import { fontNames } from '../constants/theme';
@@ -14,7 +14,6 @@ export default function ScoringScreen() {
     imageBase64,
     exifData,
     setScoreResult,
-    setImageUrl,
     reset,
   } = useSubmitStore();
 
@@ -77,34 +76,8 @@ export default function ScoringScreen() {
         return;
       }
 
-      // Upload image to storage now (so the URL is ready for post-spot)
-      const { data: sessionData } = await supabase.auth.getSession();
-      const userId = sessionData.session?.user?.id;
-      if (!userId) throw new Error('Not authenticated.');
-
-      const timestamp = Date.now();
-      const storagePath = `${userId}/${timestamp}.jpg`;
-
-      const binaryString = atob(imageBase64);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
-      }
-
-      const { error: uploadError } = await supabase.storage
-        .from('spots')
-        .upload(storagePath, bytes, { contentType: 'image/jpeg', upsert: false });
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabase.storage
-        .from('spots')
-        .getPublicUrl(storagePath);
-
-      setImageUrl(publicUrlData.publicUrl);
+      // Store the score result — upload + DB insert happen in post-spot.tsx
       setScoreResult(result);
-
-      // Navigate to score reveal — user will choose privacy in post-spot.tsx
       router.replace('/score-reveal');
     } catch (err: unknown) {
       console.error('[scoring] Error:', err);
