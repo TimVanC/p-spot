@@ -51,7 +51,8 @@ export default function RootLayout() {
     const inAuth = segments[0] === '(auth)';
     const inTabs = segments[0] === '(tabs)';
     const inProtected = [
-      'spot', 'badges', 'level', 'notifications', 'settings', 'scoring', 'score-reveal',
+      'spot', 'badges', 'level', 'notifications', 'settings',
+      'scoring', 'score-reveal', 'confirm-spot',
     ].includes(segments[0] as string);
 
     if (!onboardingComplete && inOnboarding) return;
@@ -77,6 +78,7 @@ export default function RootLayout() {
       <Stack.Screen name="level" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="confirm-spot" />
       <Stack.Screen name="scoring" />
       <Stack.Screen name="score-reveal" />
     </Stack>
