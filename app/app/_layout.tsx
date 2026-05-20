@@ -6,6 +6,7 @@ import { useFonts } from 'expo-font';
 import { Syne_700Bold } from '@expo-google-fonts/syne';
 import * as SplashScreen from 'expo-splash-screen';
 import { supabase } from '../lib/supabase';
+import '../lib/mapbox'; // initialize Mapbox token on app start
 
 SplashScreen.preventAutoHideAsync();
 
