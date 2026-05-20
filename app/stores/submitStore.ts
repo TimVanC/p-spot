@@ -4,12 +4,14 @@ import { ExifData, Privacy, ScoreResult } from '../types/scoring';
 interface SubmitState {
   imageUri: string | null;
   imageBase64: string | null;
+  imageUrl: string | null;
   exifData: ExifData | null;
   privacy: Privacy;
   scoreResult: ScoreResult | null;
   submittedSpotId: string | null;
 
   setImage: (uri: string, base64: string) => void;
+  setImageUrl: (url: string) => void;
   setExifData: (data: ExifData) => void;
   setPrivacy: (privacy: Privacy) => void;
   setScoreResult: (result: ScoreResult) => void;
@@ -20,6 +22,7 @@ interface SubmitState {
 const INITIAL_STATE = {
   imageUri: null,
   imageBase64: null,
+  imageUrl: null,
   exifData: null,
   privacy: 'public' as Privacy,
   scoreResult: null,
@@ -30,6 +33,7 @@ export const useSubmitStore = create<SubmitState>((set) => ({
   ...INITIAL_STATE,
 
   setImage: (uri, base64) => set({ imageUri: uri, imageBase64: base64 }),
+  setImageUrl: (url) => set({ imageUrl: url }),
   setExifData: (data) => set({ exifData: data }),
   setPrivacy: (privacy) => set({ privacy }),
   setScoreResult: (result) => set({ scoreResult: result }),

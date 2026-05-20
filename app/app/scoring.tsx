@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { View, Text, StyleSheet, Animated, Easing, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { scoreSpot } from '../lib/claude';
 import { useSubmitStore } from '../stores/submitStore';
@@ -13,11 +12,9 @@ export default function ScoringScreen() {
   const router = useRouter();
   const {
     imageBase64,
-    imageUri,
     exifData,
-    privacy,
     setScoreResult,
-    setSubmittedSpotId,
+    setImageUrl,
     reset,
   } = useSubmitStore();
 
@@ -63,7 +60,6 @@ export default function ScoringScreen() {
       const result = await scoreSpot(imageBase64, exifData.altitudeFt ?? 0);
 
       if (!result.moderation_pass) {
-        // Increment strikes
         const { data: profile } = await supabase
           .from('profiles')
           .select('id, strikes')
@@ -81,7 +77,7 @@ export default function ScoringScreen() {
         return;
       }
 
-      // Upload image to storage
+      // Upload image to storage now (so the URL is ready for post-spot)
       const { data: sessionData } = await supabase.auth.getSession();
       const userId = sessionData.session?.user?.id;
       if (!userId) throw new Error('Not authenticated.');
@@ -105,52 +101,10 @@ export default function ScoringScreen() {
         .from('spots')
         .getPublicUrl(storagePath);
 
-      const imageUrl = publicUrlData.publicUrl;
-      const shareToken = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-        const r = (Math.random() * 16) | 0;
-        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-      });
-
-      const { data: spot, error: insertError } = await supabase
-        .from('spots')
-        .insert({
-          user_id: userId,
-          image_url: imageUrl,
-          share_token: shareToken,
-          privacy,
-          lat: exifData.lat,
-          lng: exifData.lng,
-          altitude_ft: exifData.altitudeFt ?? null,
-          submitted_at: exifData.timestamp ?? new Date().toISOString(),
-          // base scores
-          score_view: result.score_view,
-          score_elevation: result.score_elevation,
-          score_remoteness: result.score_remoteness,
-          score_lighting: result.score_lighting,
-          score_total: result.score_total,
-          score_tier: result.score_tier,
-          // bonuses
-          bonus_skyline: result.bonus_skyline,
-          bonus_sunrise: result.bonus_sunrise,
-          bonus_wildlife: result.bonus_wildlife,
-          bonus_girth: result.bonus_girth,
-          bonus_hydration: result.bonus_hydration,
-          bonus_danger: result.bonus_danger,
-          bonus_toilet: result.bonus_toilet,
-          bonus_effort: result.bonus_effort,
-          // ai output
-          ai_quote: result.ai_quote,
-          wildlife_detected: result.wildlife_detected,
-          moderation_pass: true,
-        })
-        .select('id')
-        .single();
-
-      if (insertError) throw insertError;
-
+      setImageUrl(publicUrlData.publicUrl);
       setScoreResult(result);
-      if (spot?.id) setSubmittedSpotId(spot.id);
 
+      // Navigate to score reveal — user will choose privacy in post-spot.tsx
       router.replace('/score-reveal');
     } catch (err: unknown) {
       console.error('[scoring] Error:', err);
@@ -168,10 +122,7 @@ export default function ScoringScreen() {
           <Text style={styles.errorBody}>{error}</Text>
           <TouchableOpacity
             style={styles.tryAgainButton}
-            onPress={() => {
-              reset();
-              router.replace('/(tabs)/submit');
-            }}
+            onPress={() => { reset(); router.replace('/(tabs)/submit'); }}
             activeOpacity={0.85}
           >
             <Text style={styles.tryAgainText}>Try again</Text>
@@ -190,15 +141,10 @@ export default function ScoringScreen() {
           <Text style={styles.rejectedBody}>
             This photo didn't pass content moderation.
           </Text>
-          <Text style={styles.strikeCount}>
-            Strike {Math.min(strikeCount, 3)} of 3
-          </Text>
+          <Text style={styles.strikeCount}>Strike {Math.min(strikeCount, 3)} of 3</Text>
           <TouchableOpacity
             style={styles.tryAgainButton}
-            onPress={() => {
-              reset();
-              router.replace('/(tabs)/submit');
-            }}
+            onPress={() => { reset(); router.replace('/(tabs)/submit'); }}
             activeOpacity={0.85}
           >
             <Text style={styles.tryAgainText}>Try again</Text>
@@ -212,9 +158,7 @@ export default function ScoringScreen() {
     <View style={styles.scoringContainer}>
       <Text style={styles.logo}>P Spot</Text>
 
-      <Animated.View
-        style={[styles.pulse, { transform: [{ scale: pulseAnim }] }]}
-      />
+      <Animated.View style={[styles.pulse, { transform: [{ scale: pulseAnim }] }]} />
 
       <Text style={styles.scoringText}>Scoring your spot...</Text>
 

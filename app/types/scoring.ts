@@ -24,6 +24,7 @@ export interface ScoreResult {
   bonus_toilet: number;
   bonus_effort: number;
   wildlife_detected: boolean;
+  pee_detected: boolean;
   score_tier: ScoreTier;
   ai_quote: string;
   score_total: number;

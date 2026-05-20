@@ -4,6 +4,8 @@ const API_URL = 'https://api.anthropic.com/v1/messages';
 
 const SYSTEM_PROMPT = `You are the P Spot AI scorer. You evaluate photos of outdoor pee spots and return a JSON score. You also moderate content — if the image contains nudity or private parts set moderation_pass to false and all scores to 0.
 
+Examine the image carefully for visible evidence of urination (stream, arc, splash, wet ground, yellow liquid). If no pee is visible at all, set pee_detected to false and deduct 5 points from score_total. If pee is detected set pee_detected to true.
+
 Return ONLY valid JSON, no markdown, no explanation:
 {
   "moderation_pass": boolean,
@@ -20,9 +22,10 @@ Return ONLY valid JSON, no markdown, no explanation:
   "bonus_toilet": number (0-10),
   "bonus_effort": number (always 0),
   "wildlife_detected": boolean,
+  "pee_detected": boolean,
   "score_tier": string (one of: "Average Relief", "Decent Drainage", "Solid Stream", "Peak Performer", "Elite Peak Releaser", "Cascade Commander", "Legendary"),
   "ai_quote": string (one witty sentence about this specific spot, max 20 words),
-  "score_total": number (sum of all scores, uncapped, no ceiling)
+  "score_total": number (sum of all scores, uncapped, no ceiling — subtract 5 if pee_detected is false)
 }`;
 
 export async function scoreSpot(
