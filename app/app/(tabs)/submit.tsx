@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system/legacy';
+import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { parseImagePickerExif } from '../../lib/exif';
 import { useSubmitStore } from '../../stores/submitStore';
@@ -46,10 +47,25 @@ export default function SubmitScreen() {
   const [pendingBase64, setPendingBase64] = useState<string | null>(null);
   const [extracting, setExtracting] = useState(false);
 
-  const processAsset = async (asset: ImagePicker.ImagePickerAsset) => {
+  const compressAndEncode = async (uri: string) => {
+    const compressed = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 1600 } }],
+      { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
+    );
+    const base64 = await FileSystem.readAsStringAsync(compressed.uri, {
+      encoding: 'base64' as const,
+    });
+    return { uri: compressed.uri, base64 };
+  };
+
+  /** For photos chosen from the library — GPS comes from EXIF. */
+  const processLibraryAsset = async (asset: ImagePicker.ImagePickerAsset) => {
     setExtracting(true);
     try {
-      const exif = asset.exif ? parseImagePickerExif(asset.exif as Record<string, unknown>) : null;
+      const exif = asset.exif
+        ? parseImagePickerExif(asset.exif as Record<string, unknown>)
+        : null;
 
       if (!exif) {
         Alert.alert(
@@ -60,24 +76,53 @@ export default function SubmitScreen() {
         return;
       }
 
-      // Resize to max 1600px wide and force JPEG — prevents HEIC/oversized rejections from Claude
-      const compressed = await ImageManipulator.manipulateAsync(
-        asset.uri,
-        [{ resize: { width: 1600 } }],
-        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
-      );
-
-      const base64 = await FileSystem.readAsStringAsync(compressed.uri, {
-        encoding: 'base64' as const,
-      });
-
+      const { uri, base64 } = await compressAndEncode(asset.uri);
       setExifData(exif);
-      setPendingUri(compressed.uri);
+      setPendingUri(uri);
       setPendingBase64(base64);
       setShowPrivacySheet(true);
     } catch (err) {
-      console.error('[submit] processAsset error:', err);
+      console.error('[submit] processLibraryAsset error:', err);
       Alert.alert('Error', 'Could not read this photo. Please try another.');
+    } finally {
+      setExtracting(false);
+    }
+  };
+
+  /** For photos taken with the camera — GPS comes from device location. */
+  const processCameraAsset = async (asset: ImagePicker.ImagePickerAsset) => {
+    setExtracting(true);
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert(
+          'Location required',
+          'Allow location access so your spot can be placed on the map.',
+        );
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+
+      const exif = {
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+        altitudeFt: location.coords.altitude != null
+          ? Math.round(location.coords.altitude * 3.28084)
+          : undefined,
+        timestamp: new Date(location.timestamp).toISOString(),
+      };
+
+      const { uri, base64 } = await compressAndEncode(asset.uri);
+      setExifData(exif);
+      setPendingUri(uri);
+      setPendingBase64(base64);
+      setShowPrivacySheet(true);
+    } catch (err) {
+      console.error('[submit] processCameraAsset error:', err);
+      Alert.alert('Error', 'Could not get your location. Please try again.');
     } finally {
       setExtracting(false);
     }
@@ -98,7 +143,7 @@ export default function SubmitScreen() {
     });
 
     if (!result.canceled && result.assets[0]) {
-      await processAsset(result.assets[0]);
+      await processLibraryAsset(result.assets[0]);
     }
   };
 
@@ -113,11 +158,10 @@ export default function SubmitScreen() {
       mediaTypes: ['images'],
       allowsEditing: false,
       quality: 1,
-      exif: true,
     });
 
     if (!result.canceled && result.assets[0]) {
-      await processAsset(result.assets[0]);
+      await processCameraAsset(result.assets[0]);
     }
   };
 
