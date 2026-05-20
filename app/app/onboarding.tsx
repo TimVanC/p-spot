@@ -13,7 +13,7 @@ import {
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { colors, fontNames } from '../constants/theme';
+import { colors } from '../constants/theme';
 
 interface Slide {
   icon: string;
@@ -40,7 +40,7 @@ const SLIDES: Slide[] = [
   {
     icon: '🛡️',
     heading: 'Keep it clean.',
-    body: 'Landscape photos only. No private parts, ever. 3 strikes and you\'re out. You must be 18+ to use P Spot.',
+    body: "Landscape photos only. No private parts, ever. 3 strikes and you're out. You must be 18+ to use P Spot.",
   },
 ];
 
@@ -96,10 +96,7 @@ export default function OnboardingScreen() {
           {SLIDES.map((_, i) => (
             <View
               key={i}
-              style={[
-                styles.dot,
-                i === currentIndex ? styles.dotActive : styles.dotInactive,
-              ]}
+              style={[styles.dot, i === currentIndex ? styles.dotActive : styles.dotInactive]}
             />
           ))}
         </View>
@@ -131,20 +128,20 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   heading: {
-    fontFamily: fontNames.heading,
-    fontSize: 32,
+    fontSize: 28,
+    fontWeight: '700',
     color: colors.text,
     textAlign: 'center',
     marginBottom: 16,
-    lineHeight: 38,
+    lineHeight: 34,
   },
   body: {
-    fontFamily: fontNames.body,
     fontSize: 16,
+    fontWeight: '400',
     color: colors.text,
     textAlign: 'center',
     lineHeight: 24,
-    opacity: 0.8,
+    opacity: 0.75,
   },
   footer: {
     paddingHorizontal: 24,
@@ -176,7 +173,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    fontFamily: fontNames.heading,
     fontSize: 16,
     fontWeight: '700',
     color: colors.text,

@@ -10,7 +10,6 @@ export const colors = {
 } as const;
 
 export const fontNames = {
-  heading: 'Syne_700Bold',
-  body: 'Inter_400Regular',
-  medium: 'Inter_500Medium',
+  /** Only for P Spot logo/wordmark and score total number */
+  syne: 'Syne_700Bold',
 } as const;

@@ -13,7 +13,7 @@ import {
 import { useRouter, Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../../lib/supabase';
-import { colors, fontNames } from '../../constants/theme';
+import { colors } from '../../constants/theme';
 
 interface FormErrors {
   email?: string;
@@ -237,7 +237,9 @@ export default function SignupScreen() {
               I confirm I am 18 years of age or older
             </Text>
           </TouchableOpacity>
-          {errors.ageCheck ? <Text style={[styles.error, { marginTop: -8 }]}>{errors.ageCheck}</Text> : null}
+          {errors.ageCheck ? (
+            <Text style={[styles.error, { marginTop: -8 }]}>{errors.ageCheck}</Text>
+          ) : null}
 
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
@@ -280,14 +282,14 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   heading: {
-    fontFamily: fontNames.heading,
-    fontSize: 34,
+    fontSize: 28,
+    fontWeight: '700',
     color: colors.text,
     marginBottom: 4,
   },
   subheading: {
-    fontFamily: fontNames.body,
-    fontSize: 15,
+    fontSize: 16,
+    fontWeight: '400',
     color: colors.deep,
     marginBottom: 32,
   },
@@ -298,16 +300,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   generalErrorText: {
-    fontFamily: fontNames.body,
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: '400',
     color: colors.errorText,
   },
   field: {
     marginBottom: 16,
   },
   label: {
-    fontFamily: fontNames.medium,
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: '500',
     color: colors.text,
     marginBottom: 6,
   },
@@ -318,16 +320,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 13,
     paddingVertical: 13,
-    fontFamily: fontNames.body,
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: '400',
     color: colors.text,
   },
   inputError: {
     borderColor: colors.errorText,
   },
   error: {
-    fontFamily: fontNames.body,
     fontSize: 12,
+    fontWeight: '400',
     color: colors.errorText,
     marginTop: 4,
   },
@@ -354,12 +356,12 @@ const styles = StyleSheet.create({
   },
   checkmark: {
     fontSize: 13,
-    color: colors.text,
     fontWeight: '700',
+    color: colors.text,
   },
   checkboxLabel: {
-    fontFamily: fontNames.body,
     fontSize: 14,
+    fontWeight: '400',
     color: colors.text,
     flex: 1,
     lineHeight: 20,
@@ -376,7 +378,6 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    fontFamily: fontNames.heading,
     fontSize: 16,
     fontWeight: '700',
     color: colors.text,
@@ -387,13 +388,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   linkText: {
-    fontFamily: fontNames.body,
     fontSize: 14,
+    fontWeight: '400',
     color: colors.text,
   },
   link: {
-    fontFamily: fontNames.medium,
     fontSize: 14,
+    fontWeight: '500',
     color: colors.mid,
     textDecorationLine: 'underline',
   },

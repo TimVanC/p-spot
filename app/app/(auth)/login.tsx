@@ -13,7 +13,7 @@ import {
 import { useRouter, Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { supabase } from '../../lib/supabase';
-import { colors, fontNames } from '../../constants/theme';
+import { colors } from '../../constants/theme';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -37,12 +37,14 @@ export default function LoginScreen() {
       });
 
       if (signInError) {
+        console.error('[Login] Supabase error:', signInError);
         setError('Incorrect email or password.');
         return;
       }
 
       router.replace('/(tabs)');
-    } catch {
+    } catch (err) {
+      console.error('[Login] Unexpected error:', err);
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
@@ -136,14 +138,14 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   heading: {
-    fontFamily: fontNames.heading,
-    fontSize: 34,
+    fontSize: 28,
+    fontWeight: '700',
     color: colors.text,
     marginBottom: 4,
   },
   subheading: {
-    fontFamily: fontNames.body,
-    fontSize: 15,
+    fontSize: 16,
+    fontWeight: '400',
     color: colors.deep,
     marginBottom: 36,
   },
@@ -154,16 +156,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   errorBoxText: {
-    fontFamily: fontNames.body,
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: '400',
     color: colors.errorText,
   },
   field: {
     marginBottom: 16,
   },
   label: {
-    fontFamily: fontNames.medium,
-    fontSize: 13,
+    fontSize: 14,
+    fontWeight: '500',
     color: colors.text,
     marginBottom: 6,
   },
@@ -174,8 +176,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 13,
     paddingVertical: 13,
-    fontFamily: fontNames.body,
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: '400',
     color: colors.text,
   },
   inputError: {
@@ -193,7 +195,6 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   buttonText: {
-    fontFamily: fontNames.heading,
     fontSize: 16,
     fontWeight: '700',
     color: colors.text,
@@ -204,13 +205,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   linkText: {
-    fontFamily: fontNames.body,
     fontSize: 14,
+    fontWeight: '400',
     color: colors.text,
   },
   link: {
-    fontFamily: fontNames.medium,
     fontSize: 14,
+    fontWeight: '500',
     color: colors.mid,
     textDecorationLine: 'underline',
   },

@@ -4,7 +4,6 @@ import { Session } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Syne_700Bold } from '@expo-google-fonts/syne';
-import { Inter_400Regular, Inter_500Medium } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
 import { supabase } from '../lib/supabase';
 
@@ -17,11 +16,7 @@ export default function RootLayout() {
   const router = useRouter();
   const segments = useSegments();
 
-  const [fontsLoaded, fontError] = useFonts({
-    Syne_700Bold,
-    Inter_400Regular,
-    Inter_500Medium,
-  });
+  const [fontsLoaded, fontError] = useFonts({ Syne_700Bold });
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: s } }) => {
@@ -55,9 +50,9 @@ export default function RootLayout() {
     const inOnboarding = segments[0] === 'onboarding';
     const inAuth = segments[0] === '(auth)';
     const inTabs = segments[0] === '(tabs)';
-    const inProtected = ['spot', 'badges', 'level', 'notifications', 'settings'].includes(
-      segments[0] as string,
-    );
+    const inProtected = [
+      'spot', 'badges', 'level', 'notifications', 'settings', 'scoring', 'score-reveal',
+    ].includes(segments[0] as string);
 
     if (!onboardingComplete && inOnboarding) return;
     if (onboardingComplete && !session && inAuth) return;
@@ -82,6 +77,8 @@ export default function RootLayout() {
       <Stack.Screen name="level" />
       <Stack.Screen name="notifications" />
       <Stack.Screen name="settings" />
+      <Stack.Screen name="scoring" />
+      <Stack.Screen name="score-reveal" />
     </Stack>
   );
 }
