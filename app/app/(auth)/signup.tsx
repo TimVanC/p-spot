@@ -109,6 +109,7 @@ export default function SignupScreen() {
       });
 
       if (signUpError) {
+        console.error('[Signup] Supabase auth error:', signUpError);
         setErrors({ general: signUpError.message });
         return;
       }
@@ -119,6 +120,7 @@ export default function SignupScreen() {
         return;
       }
 
+      console.log('[Signup] Auth user created:', user.id);
       const { error: profileError } = await supabase.from('profiles').insert({
         id: user.id,
         username: username.trim().toLowerCase(),
@@ -129,6 +131,7 @@ export default function SignupScreen() {
       });
 
       if (profileError) {
+        console.error('[Signup] Profile insert error:', profileError);
         if (profileError.code === '23505') {
           setErrors({ username: 'That username is already taken.' });
         } else {
@@ -138,7 +141,8 @@ export default function SignupScreen() {
       }
 
       router.replace('/(tabs)');
-    } catch {
+    } catch (err) {
+      console.error('[Signup] Unexpected error:', err);
       setErrors({ general: 'Something went wrong. Please try again.' });
     } finally {
       setLoading(false);
