@@ -146,18 +146,25 @@ export default function PostSpotScreen() {
       const { data: spot, error: insertError } = await supabase
         .from('spots')
         .insert(insertPayload)
-        .select('id')
+        .select('id, share_token')
         .single();
 
       if (insertError) {
         throw new Error(`DB insert error: ${insertError.message} (code: ${insertError.code})`);
       }
 
-      console.log('[post-spot] Spot saved! id:', spot?.id);
+      console.log('[post-spot] Spot saved! id:', spot?.id, 'share_token:', spot?.share_token);
       if (spot?.id) setSubmittedSpotId(spot.id);
 
-      reset();
-      router.replace('/(tabs)');
+      // Navigate to success screen — store reset happens there
+      router.replace({
+        pathname: '/post-success',
+        params: {
+          share_token: spot?.share_token ?? '',
+          score_total: String(scoreResult.score_total),
+          score_tier: scoreResult.score_tier,
+        },
+      });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : String(err);
       console.error('[post-spot] FAILED:', message);

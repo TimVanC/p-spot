@@ -6,7 +6,6 @@ import {
   ScrollView,
   TouchableOpacity,
   StyleSheet,
-  Share,
   Animated,
   StatusBar,
   useWindowDimensions,
@@ -43,47 +42,6 @@ export default function ScoreRevealScreen() {
     router.replace('/(tabs)/submit');
     return null;
   }
-
-  const buildShareMessage = () => {
-    const metrics = [
-      { label: 'View Quality', value: scoreResult.score_view, max: 25, emoji: '🏔️' },
-      { label: 'Elevation', value: scoreResult.score_elevation, max: 20, emoji: '⛰️' },
-      { label: 'Remoteness', value: scoreResult.score_remoteness, max: 15, emoji: '🌲' },
-      { label: 'Lighting', value: scoreResult.score_lighting, max: 10, emoji: '🌅' },
-      { label: 'Danger', value: scoreResult.bonus_danger, max: 8, emoji: '⚡' },
-      { label: 'Hydration', value: scoreResult.bonus_hydration, max: 5, emoji: '💧' },
-      { label: 'Skyline', value: scoreResult.bonus_skyline, max: 8, emoji: '🌆' },
-      { label: 'Wildlife', value: scoreResult.bonus_wildlife, max: 8, emoji: '🦅' },
-      { label: 'Stream', value: scoreResult.bonus_girth, max: 5, emoji: '💦' },
-      { label: 'Sunrise/Sunset', value: scoreResult.bonus_sunrise, max: 5, emoji: '🌄' },
-    ];
-
-    const top3 = metrics
-      .filter((m) => m.value > 0)
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 3);
-
-    const metricLines = top3.map((m) => `${m.emoji} ${m.label}: ${m.value}/${m.max}`);
-
-    return [
-      'P SPOT RECEIPT 🧾',
-      '―――――――――――――',
-      `Score: ${scoreResult.score_total}`,
-      `Tier: ${scoreResult.score_tier}`,
-      ...metricLines,
-      '―――――――――――――',
-      'Every great piss deserves a score.',
-      'https://www.pspot.app/',
-    ].join('\n');
-  };
-
-  const handleShare = async () => {
-    try {
-      await Share.share({ message: buildShareMessage() });
-    } catch (err) {
-      console.error('[score-reveal] share error:', err);
-    }
-  };
 
   const handlePostSpot = () => {
     router.push('/post-spot');
@@ -166,12 +124,8 @@ export default function ScoreRevealScreen() {
         <View style={styles.divider} />
 
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.primaryButton} onPress={handleShare} activeOpacity={0.85}>
-            <Text style={styles.primaryButtonText}>Share score</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.secondaryButton} onPress={handlePostSpot} activeOpacity={0.85}>
-            <Text style={styles.secondaryButtonText}>Post to P Spot</Text>
+          <TouchableOpacity style={styles.primaryButton} onPress={handlePostSpot} activeOpacity={0.85}>
+            <Text style={styles.primaryButtonText}>Post this spot</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.textLink} onPress={handleSubmitAnother} activeOpacity={0.7}>
@@ -264,15 +218,6 @@ const styles = StyleSheet.create({
   actions: { paddingHorizontal: 20, gap: 10 },
   primaryButton: { backgroundColor: colors.primary, borderRadius: 12, paddingVertical: 15, alignItems: 'center' },
   primaryButtonText: { fontSize: 16, fontWeight: '600', color: colors.text },
-  secondaryButton: {
-    backgroundColor: colors.white,
-    borderRadius: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  secondaryButtonText: { fontSize: 16, fontWeight: '600', color: colors.mid },
   textLink: { alignItems: 'center', paddingVertical: 8 },
   textLinkText: { fontSize: 14, fontWeight: '400', color: '#999' },
 
