@@ -11,6 +11,7 @@ import {
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Ionicons } from '@expo/vector-icons';
 import { parseImagePickerExif } from '../../lib/exif';
@@ -59,12 +60,19 @@ export default function SubmitScreen() {
         return;
       }
 
-      const base64 = await FileSystem.readAsStringAsync(asset.uri, {
+      // Resize to max 1600px wide and force JPEG — prevents HEIC/oversized rejections from Claude
+      const compressed = await ImageManipulator.manipulateAsync(
+        asset.uri,
+        [{ resize: { width: 1600 } }],
+        { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG },
+      );
+
+      const base64 = await FileSystem.readAsStringAsync(compressed.uri, {
         encoding: 'base64' as const,
       });
 
       setExifData(exif);
-      setPendingUri(asset.uri);
+      setPendingUri(compressed.uri);
       setPendingBase64(base64);
       setShowPrivacySheet(true);
     } catch (err) {
