@@ -75,7 +75,9 @@ export async function scoreSpot(
   const text: string = data?.content?.[0]?.text ?? '';
 
   try {
-    const result: ScoreResult = JSON.parse(text);
+    // Strip markdown code fences if Claude wraps the response despite instructions
+    const clean = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+    const result: ScoreResult = JSON.parse(clean);
     return result;
   } catch {
     console.error('[claude] Failed to parse JSON response:', text);
