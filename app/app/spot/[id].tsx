@@ -499,7 +499,6 @@ const styles = StyleSheet.create({
   },
   headerLeft: { flex: 1 },
   scoreTotal: {
-    fontFamily: fontNames.syne,
     fontSize: 56,
     fontWeight: '800',
     color: colors.mid,

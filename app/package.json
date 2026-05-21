@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start",
+    "start": "expo start --tunnel --go",
+    "seed": "npx ts-node --project tsconfig.json -e \"require('ts-node').register({transpileOnly:true})\" scripts/seed.ts",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -17,6 +18,7 @@
     "@supabase/supabase-js": "^2.106.0",
     "exifr": "^7.1.3",
     "expo": "~54.0.33",
+    "expo-dev-client": "~6.0.21",
     "expo-file-system": "~19.0.22",
     "expo-font": "~14.0.11",
     "expo-image-manipulator": "~14.0.8",

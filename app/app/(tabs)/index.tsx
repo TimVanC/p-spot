@@ -353,7 +353,6 @@ const rowStyles = StyleSheet.create({
   time: { fontSize: 12, fontWeight: '400', color: '#999' },
   privacyIcon: { marginLeft: 2 },
   score: {
-    fontFamily: fontNames.syne,
     fontSize: 22,
     fontWeight: '700',
     color: colors.mid,
